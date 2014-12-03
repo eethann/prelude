@@ -35,16 +35,6 @@
 
 (prelude-require-packages '(helm helm-projectile))
 
-(require 'helm)
-(require 'helm-grep)
-(require 'helm-files)
-
-;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
-;; Note: this must be placed before require `helm-config'. If `helm-projectile' is
-;; available, it must also be set before `helm-projectile', since `helm-projectile'
-;; loads `helm-config'
-(setq helm-command-prefix-key "C-c h")
-
 (require 'helm-config)
 (require 'helm-projectile)
 
@@ -53,8 +43,7 @@
 
 ;; See https://github.com/bbatsov/prelude/pull/670 for a detailed
 ;; discussion of these options.
-(setq helm-quick-update                     t
-      helm-split-window-in-side-p           t
+(setq helm-split-window-in-side-p           t
       helm-buffers-fuzzy-matching           t
       helm-move-to-line-cycle-in-source     t
       helm-ff-search-library-in-sexp        t
@@ -70,10 +59,6 @@
 (define-key helm-command-map (kbd "g")     'helm-do-grep)
 (define-key helm-command-map (kbd "C-c w") 'helm-wikipedia-suggest)
 (define-key helm-command-map (kbd "SPC")   'helm-all-mark-rings)
-
-(define-key helm-grep-mode-map (kbd "RET") 'helm-grep-mode-jump-other-window)
-(define-key helm-grep-mode-map (kbd "n")   'helm-grep-mode-jump-other-window-forward)
-(define-key helm-grep-mode-map (kbd "p")   'helm-grep-mode-jump-other-window-backward)
 
 (push "Press <C-c p h> to navigate a project in Helm." prelude-tips)
 
