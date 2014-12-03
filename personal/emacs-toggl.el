@@ -6,7 +6,7 @@
 
 ;;; Code:
 
-(require 'request)
+(prelude-require-package 'request)
 (require 'json)
 
 (make-local-variable 'toggl-current-timer-id)
@@ -18,7 +18,8 @@
 (defvar toggl-request-domain "www.toggl.com")
 (defvar toggl-request-base-path "/api/v8")
 
-(setq toggl-api-key "8ae09b0be26d4aa1713f30af2d778801")
+;; TODO Use gpg encrypted file for this (authorization.txt.gpg?)
+(setq toggl-api-key "<SECRET>")
 
 (defun toggl-request-url (request-path)
   (concat

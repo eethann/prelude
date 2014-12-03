@@ -2,21 +2,55 @@
 
 (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
 (prelude-require-packages '(smtpmail))
+
+;;; Need to set user-mail-address before loading mu4e
+;;; https://github.com/djcb/mu/issues/399
+(setq
+ user-mail-address "ethan@colab.coop"
+ mu4e-confirm-quit nil
+ )
+
 (require 'mu4e)
+(require 'org-mu4e)
 
 (setq user-full-name "Ethan Winn"
-      user-mail-address "ethan@colab.coop"
-      mail-signature "
----
-Ethan Winn
-ethan@colab.coop"
-      major-mode 'markdown-mode)
+      user-mail-address "ethan@colab.coop")
+
+(defun eethann/mail-signature-separator () 
+  (nth (random 3) '("~~~~~" "---" "=-+-="))
+)
+
+(defun eethann/mail-signature () 
+  (concat
+   ;; (eethann/mail-signature-separator)
+   ;; "\n"
+   "ethan@colab.coop"
+   "\n"
+   "(w)866.991.3263"
+   "\n"
+   "(c)617.517.4949"
+   "\n"
+   "
+In order to stay aligned with what matters most I limit my use of
+email. I try to check only twice a day: once at mid-day and once at
+the end of the day (usually EST, GMT - 5hrs). If your matter is more
+urgent, please reach out to me via Google Chat/jabber or phone.
+"
+   )
+)
+
+(setq mail-signature (eethann/mail-signature))
+
+(setq mu4e-compose-signature
+      'eethann/mail-signature)
+
 
 (defun mailrc ()
   (interactive)
   (find-file "~/.mailrc")
   )
 
+; TODO: Switch to using nullmailer because it's faster
 (setq smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
       smtpmail-smtp-server "smtp.gmail.com"
       smtpmail-default-smtp-server "smtp.gmail.com"
@@ -57,11 +91,17 @@ ethan@colab.coop"
        ("/[Gmail]/.All Mail"    . ?a)))
 
 ;; allow for updating mail using 'U' in the main view:
-(setq mu4e-get-mail-command "mbsync -a")
+(setq mu4e-get-mail-command "mbsync -aq")
 
 ;; enable org-to-html
-(require 'org-mu4e)
-(setq org-mu4e-convert-to-html t)
+;; this doesn't work.
+;; (require 'org-mu4e)
+(setq org-mu4e-convert-to-html nil)
+(setq mu4e-change-filenames-when-moving t)
+(setq mu4e-use-fancy-chars t)
+
+
+
 
 ;; need this to convert some e-mails properly
 ;;    (setq mu4e-html2text-command "html2text -utf8 -width 72")
@@ -142,16 +182,39 @@ ethan@colab.coop"
        "RET" 'mu4e-view-message)
      ))
 
+(loop for (mode) in '('mu4e-headers-mode 'mu4e-compose-mode 'mu4e-main-mode)
+      do 
+'      (setq evil-emacs-state-modes (remove mode evil-emacs-state-modes)))
 
 ;; something about ourselves
 ;; I don't use a signature...
 (setq
  user-mail-address "ethan@colab.coop"
  user-full-name  "Ethan Winn"
- ;; message-signature
- ;;  (concat
- ;;    "Foo X. Bar\n"
- ;;    "http://www.example.com\n")
+  message-signature
+   (concat
+     "\n---\n"
+     "Ethan Winn - worker and owner @ CoLab.coop\n"
+     "ethan@colab.coop\n")
  )
+
+;; Set up Queue Mode bindings
+
+(setq smtpmail-queue-mail nil  ;; start in queuing mode
+      smtpmail-queue-dir   "~/mail/queue/cur")
+
+(defun eethann/smtpmail-toggle-queue-mail ()
+    "Toggle mail queueing"
+  (interactive)
+  (if smtpmail-queue-mail
+      (setq smtpmail-queue-mail nil)
+      (setq smtpmail-queue-mail t)
+      )
+  )
+
+(evil-leader/set-key
+  "C->" 'eethann/smtpmail-toggle-queue-mail
+  "C-." 'smtpmail-send-queued-mail
+)
 
 (provide 'personal-email)

@@ -14,17 +14,26 @@
                             color-theme-sanityinc-tomorrow
                             base16-theme
                             smooth-scrolling
+                            moe-theme
+                            seti-theme
                             ))
 
-;; (load-theme 'base16-chalk)
-(color-theme-sanityinc-tomorrow-eighties)
+(setq ns-use-srgb-colorspace t)
 
-(toggle-frame-fullscreen)
+;; (load-theme 'base16-tomorrow)
+;; (color-theme-sanityinc-tomorrow-eighties)
+;; (require 'moe-theme)
+;; (moe-dark)
+
+(load-theme 'seti t)
+
+;; (toggle-frame-fullscreen)
 (global-set-key (kbd "C-c C-f") 'toggle-frame-fullscreen)
 
 
 
 (menu-bar-mode 1)
+(display-battery-mode 1)
 
 (setq ring-bell-function 'ignore)
 
@@ -33,7 +42,7 @@
 
 (if window-system
     (progn
-      (set-face-attribute 'default nil :font "Inconsolata-g-14")
+      (set-face-attribute 'default nil :font "Inconsolata-g-for-Powerline-15")
       ;; (set-frame-font "Inconsolata-g-12" nil)
       )
 )

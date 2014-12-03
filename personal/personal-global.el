@@ -16,6 +16,7 @@
  '(
    pretty-mode
    rainbow-delimiters
+   smartparens
    switch-window
    ag
    ))
@@ -24,10 +25,12 @@
 (global-set-key (kbd "C-x o") 'switch-window)
 
 ; Rainbows EVERYWHERE!
-(global-rainbow-delimiters-mode)
+; (global-rainbow-delimiters-mode)
 
 ;; Pretty is nice...
 (global-pretty-mode t)
+(smartparens-global-mode 1)
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
 ;; I REALLY don't like Guru mode
 (setq guru-global-mode -1)

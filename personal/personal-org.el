@@ -9,6 +9,7 @@
                             org-jira
                             ;; orgbox
                             org-pomodoro
+                            evil-org
                             ))
 
 (require 'org-agenda)
@@ -46,9 +47,12 @@
 (define-key global-map "\C-cc" 'org-capture)
 (setq org-agenda-files '("~/org/notes.org"
 			 "~/org/plans.org"
+                         "~/org/today.org"
 			 "~/org/todo.org"
                          "~/org/flagged.org"
                          "~/org/inbox.org.txt"
+                         "~/org/inbox.alfred.org.txt"
+                         "~/org/inbox.auto.org.txt"
 			 "~/org/meeting-agendas.org"
                          "~/org/personal.org"
                          "~/org/projects.org"
@@ -57,12 +61,15 @@
 			 ))
 
 (setq org-capture-templates
-      '(("t" "Todo" entry
+      '(("T" "TODO Today" entry
+	 (file+headline "~/org/today.org" "Inbox")
+	 "* TODO %?\n  %i\n  %a")
+        ("t" "Todo" entry
 	 (file+headline "~/org/todo.org" "Inbox")
 	 "* TODO %?\n  %i\n  %a")
         ("i" "Inbox" entry
          (file+headline "~/org/inbox.org.txt" "Unprocessed")
-         "* TODO %?\n")
+         "* TODO %?\n %i\n %a")
 	("a" "Agenda" entry
 	 (file+headline "~/org/meeting-agendas.org" "Inbox")
 	 "* TODO %?\n  %i\n  %a")
@@ -136,6 +143,8 @@
 
 (setq org-agenda-custom-commands
 '(
+  ("." "Next Actions" todo "NEXT")  
+  ("d" "Agenda + Next Actions" ((agenda) (todo "NEXT")))
   ("'" "Todo 3" tags-todo ""
    (setq org-agenda-max-entries 3)
    )
@@ -189,7 +198,33 @@
 
 (setq org-refile-target-verify-function 'bh/verify-refile-target)
 
+(defun org-insert-src-block (src-code-type)
+  "Insert a `SRC-CODE-TYPE' type source code block in org-mode."
+  (interactive
+   (let ((src-code-types
+          '("emacs-lisp" "python" "C" "sh" "java" "js" "clojure" "C++" "css"
+            "calc" "asymptote" "dot" "gnuplot" "ledger" "lilypond" "mscgen"
+            "octave" "oz" "plantuml" "R" "sass" "screen" "sql" "awk" "ditaa"
+            "haskell" "latex" "lisp" "matlab" "ocaml" "org" "perl" "ruby"
+            "scheme" "sqlite")))
+     (list (ido-completing-read "Source code type: " src-code-types))))
+  (progn
+    (newline-and-indent)
+    (insert (format "#+BEGIN_SRC %s\n" src-code-type))
+    (newline-and-indent)
+    (insert "#+END_SRC\n")
+    (previous-line 2)
+    (org-edit-src-code)))
 
+
+;; active Org-babel languages
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '(;; other Babel languages
+   (plantuml . t)))
+
+(setq org-plantuml-jar-path
+      (expand-file-name "/usr/local/Cellar/plantuml/8002/plantuml.8002.jar"))
 ;; Work with custom TODO states
 ;; From http://sachachua.com/blog/2014/04/thinking-todo-keywords/
 
@@ -201,7 +236,20 @@
 ;;                ((org-agenda-skip-function 'sacha/org-agenda-skip-scheduled)
 ;;                 (org-agenda-overriding-header "Unscheduled TODO entries: "))))
 
-(require 'emacs-toggl)
+;; (require 'emacs-toggl)
+
+(defun eethann/org-advance-narrowed-buffer () 
+  (interactive)
+  (widen)
+  (org-forward-heading-same-level 1)
+  (org-narrow-to-subtree)
+)
+
+(evil-leader/set-key-for-mode 'org-mode
+  "j" 'eethann/org-advance-narrowed-buffer
+  "N" 'widen
+  "n" 'org-narrow-to-subtree
+)
 
 (provide 'personal-org)
 ;;; personal-org  ends here

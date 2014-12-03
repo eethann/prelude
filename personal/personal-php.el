@@ -5,7 +5,7 @@
 
 ;;; Code:
 
-(prelude-require-packages '(geben))
+(prelude-require-packages '(geben php-mode))
 
 
 (custom-set-variables

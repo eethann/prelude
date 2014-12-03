@@ -5,9 +5,16 @@
                             evil-surround
                             evil-matchit
                             evil-nerd-commenter
+                            evil-org
+                            evil-exchange
+                            ;; evil-extra-operator
                             ace-jump-mode
                             ace-jump-buffer
                             ))
+
+(evil-exchange-install)
+;; (require 'evil-nerd-commenter)
+
 (global-evil-leader-mode)
 (evil-mode 1)
 (setq evil-shift-width 2)
@@ -16,14 +23,14 @@
 
 (evil-leader/set-leader ";")
 
-(evil-define-key 'normal global-map "," 'evil-execute-in-god-state)
+(evil-define-key 'normal global-map "\"" 'evil-execute-in-god-state)
 (evil-define-key 'god global-map [escape] 'evil-god-state-bail)
 
 ;; evil-nerd-commenter bindings
 
 (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
 (evil-leader/set-key
-  "/i" 'evilnc-comment-or-uncomment-lines
+  "//" 'evilnc-comment-or-uncomment-lines
   "/l" 'evilnc-comment-or-uncomment-to-the-line
   "/c" 'evilnc-copy-and-comment-lines
   "/p" 'evilnc-comment-or-uncomment-paragraphs
@@ -35,35 +42,45 @@
 
 (evil-leader/set-key
   ";" 'evil-buffer
-  "'" 'helm-mini
+  "SPC" 'helm-mini
+
+  ;; the home row
+  "a" 'org-agenda
+  "s" 'ag
+  "d" 'neotree-toggle
+  "f" 'fill-region
+  "g" 'magit-status
+  "j" 'helm-imenu
+  "k" 'kill-buffer
+  "l" 'switch-window
+
+  ;; Others
   "e" 'helm-projectile
   "b" 'evil-buffer
-  "k" 'kill-buffer
   "B" 'switch-to-buffer
-  "c" 'org-capture
   "r" 'quickrun
-  "G" 'magit-status
-  "g" 'evil-execute-in-god-state
   "D" 'deft
-  "x" 'execute-extended-command
-  "d" 'kill-this-buffer
+  "X" 'execute-extended-command
   "q" 'kill-buffer-and-window
-  "a" 'helm-mini
-  "s" 'ag
-  "F" 'fill-region
   "w" 'switch-window
   "##" 'linum-mode
   "#$" 'linum-relative-toggle
   "?" 'help
-  "tt" 'toggl-start-timer
-  "ts" 'toggl-stop-timer
+  ;; "tt" 'toggl-start-timer
+  ;; "ts" 'toggl-stop-timer
   "m" 'mc/mark-next-like-this
   "M" 'mc/mark-all-like-this
   "E" 'mc/edit-lines
   "P" 'popwin:popup-last-buffer
   "T" 'bw/open-term
-  "y" 'bury-buffer
-  ">" 'mail
+  ;; "y" 'bury-buffer
+  ">" 'mu4e-compose-new
+  "<" 'mu4e
+  ;; org (most defined in evil-org as well)
+  "t"  'org-show-todo-tree
+  "a"  'org-agenda
+  "x"  'org-archive-subtree
+  "c" 'org-capture
   )
 
 ;; Window handling
@@ -72,15 +89,16 @@
 ;; Evil leader for Flycheck
 
 (evil-leader/set-key
-  "fl" 'flycheck-list-errors
-  "ff" 'flycheck-next-error
-  "fn" 'flycheck-next-error
-  "fp" 'flycheck-previous-error)
+  "Fl" 'flycheck-list-errors
+  "Ff" 'flycheck-next-error
+  "Fn" 'flycheck-next-error
+  "Fp" 'flycheck-previous-error)
 
 ;; Evil leader for org
 
 (evil-leader/set-key-for-mode 'org-mode
-  "C" 'org-toggle-checkbox
+  "ox" 'org-toggle-checkbox
+  "x" 'org-toggle-checkbox
   "oj" 'org-goto
   "os" 'org-schedule
   "oo" 'org-open-at-point
@@ -90,13 +108,18 @@
   "od" 'org-deadline
   "ot" 'org-todo
   "oS" 'org-save-all-org-buffers
+  "oc" 'org-clock-in
+  "oC" 'org-clock-out
+  "o;" 'org-cycle
+  "o!" 'org-insert-src-block
+  "oq" 'org-set-tags
   )
 
 
 ;; Evil for Helm
 ;; from https://github.com/syl20bnr/spacemacs/blob/master/my-keybindings.el
 (evil-leader/set-key
-  "a"     'helm-mini
+  "'"     'helm-mini
   "hh"    'helm-mini
   "ho"    'helm-occur
   "hp"    'helm-projectile
@@ -122,14 +145,15 @@
 (evil-set-initial-state 'org 'insert)
 (evil-set-initial-state 'org-mode 'insert)
 (evil-set-initial-state 'mail-mode 'insert)
+(evil-set-initial-state 'mail-mode 'insert)
 
 ;; Fancy display stuff ((can probably remove this with powerline))
-(setq evil-normal-state-tag (propertize "N" 'face '((:background "green" :foreground "black")))
-      evil-emacs-state-tag (propertize "E" 'face '((:background "orange" :foreground "black")))
-      evil-insert-state-tag (propertize "I" 'face '((:background "red")))
-      evil-motion-state-tag (propertize "M" 'face '((:background "blue")))
-      evil-visual-state-tag (propertize "V" 'face '((:background "grey80" :foreground "black")))
-      evil-operator-state-tag (propertize "O" 'face '((:background "purple"))))
+;; (setq evil-normal-state-tag (propertize "N" 'face '((:background "green" :foreground "black")))
+;;       evil-emacs-state-tag (propertize "E" 'face '((:background "orange" :foreground "black")))
+;;       evil-insert-state-tag (propertize "I" 'face '((:background "red")))
+;;       evil-motion-state-tag (propertize "M" 'face '((:background "blue")))
+;;       evil-visual-state-tag (propertize "V" 'face '((:background "grey80" :foreground "black")))
+;;       evil-operator-state-tag (propertize "O" 'face '((:background "purple"))))
 
 ;; Evil god mode
 
@@ -191,28 +215,27 @@
   )
 
 ;; normal state shortcuts
+;; commented out lines are mapping taken care of by evil-org
 (evil-define-key 'normal evil-org-mode-map
-  "gh" 'outline-up-heading
-  "gj" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
-	   'org-forward-same-level
-	  'org-forward-heading-same-level)
-  "gk" (if (fboundp 'org-backward-same-level)
-	   'org-backward-same-level
-	  'org-backward-heading-same-level)
-  "gl" 'outline-next-visible-heading
+  ;; "gh" 'outline-up-heading
+  ;; "gj" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
+  ;;          'org-forward-same-level
+  ;;         'org-forward-heading-same-level)
+  ;; "gk" (if (fboundp 'org-backward-same-level)
+  ;;          'org-backward-same-level
+  ;;         'org-backward-heading-same-level)
+  ;; "gl" 'outline-next-visible-heading
   "t" 'org-todo
-  "T" '(lambda () (interactive) (evil-org-eol-call '(org-insert-todo-heading-after-current nil)))
-  "H" 'org-beginning-of-line
-  "L" 'org-end-of-line
-  ";t" 'org-show-todo-tree
-  "o" '(lambda () (interactive) (evil-org-eol-call 'always-insert-item))
-  "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading-after-current))
-  "$" 'org-end-of-line
+  ;; "T" '(lambda () (interactive) (evil-org-eol-call '(org-insert-todo-heading-after-current nil)))
+  ;; "H" 'org-beginning-of-line
+  ;; "L" 'org-end-of-line
+  ;; "o" '(lambda () (interactive) (evil-org-eol-call 'always-insert-item))
+  ;; "O" '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading-after-current))
+  ;; "$" 'org-end-of-line
   "^" 'org-beginning-of-line
-  ">" 'orgbox-schedule
-  "<" 'org-deadline
-  ";a" 'org-agenda
-  "-" 'org-cycle-list-bullet
+  "-" 'orgbox-schedule
+  "_" 'org-deadline
+  "+" 'org-cycle-list-bullet
   (kbd "TAB") 'org-cycle)
 
 (evil-leader/set-key-for-mode
@@ -274,8 +297,14 @@
                               (dired-mode . emacs)
                               (wdired-mode . normal)
                               (project-explorer-mode . emacs)
+                              (mu4e-headers-mode . emacs)
+                              (mu4e-compose-mode . emacs)
                               )
       do (evil-set-initial-state mode state))
+
+(loop for (mode) in '('mu4e-headers-mode 'mu4e-compose-mode 'mu4e-main-mode)
+      do 
+'      (setq evil-emacs-state-modes (remove mode evil-emacs-state-modes)))
 
 ;; Power-up for the escape key
 ;;; esc quits
@@ -321,6 +350,15 @@
        '(?0)
        ))
 
+;; hl-anything bindings
+(evil-leader/set-key 
+  "yy" 'hl-highlight-thingatpt-local
+  "yu" 'hl-unhighlight-all-local
+  "ys" 'hl-find-thing-forwardly
+  "yS" 'hl-find-thing-backwardly
+  "yp" 'hl-paren-mode
+)
+
 ;;
 ;; enable a more powerful jump back function from ace jump mode
 ;;
@@ -332,7 +370,7 @@
 (eval-after-load "ace-jump-mode"
   '(ace-jump-mode-enable-mark-sync))
 (define-key global-map (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
-(evil-leader/set-key "SPC" 'ace-jump-mode-pop-mark)
+(evil-leader/set-key "'" 'ace-jump-mode-pop-mark)
 
 ;;
 ;; from https://github.com/bradleywright/emacs.d/blob/master/utils.el
@@ -345,5 +383,59 @@ with prefix"
       (multi-term (getenv "SHELL"))
     (switch-to-buffer "*terminal*")))
 (global-set-key (kbd "C-c C-t t") 'bw/open-term)
+
+
+;; Evil Org Maps
+;; from https://github.com/cofi/dotfiles/blob/master/emacs.d/config/cofi-evil.el
+
+(evil-define-key 'normal org-mode-map
+  (kbd "RET") 'org-open-at-point
+  "za"        'org-cycle
+  "zA"        'org-shifttab
+  "zm"        'hide-body
+  "zr"        'show-all
+  "zo"        'show-subtree
+  "zO"        'show-all
+  "zc"        'hide-subtree
+  "zC"        'hide-all
+  (kbd "M-j") 'org-shiftleft
+  (kbd "M-k") 'org-shiftright
+  (kbd "M-H") 'org-metaleft
+  (kbd "M-J") 'org-metadown
+  (kbd "M-K") 'org-metaup
+  (kbd "M-L") 'org-metaright)
+
+(evil-define-key 'normal orgstruct-mode-map
+  (kbd "RET") 'org-open-at-point
+  "za"        'org-cycle
+  "zA"        'org-shifttab
+  "zm"        'hide-body
+  "zr"        'show-all
+  "zo"        'show-subtree
+  "zO"        'show-all
+  "zc"        'hide-subtree
+  "zC"        'hide-all
+  (kbd "M-j") 'org-shiftleft
+  (kbd "M-k") 'org-shiftright
+  (kbd "M-H") 'org-metaleft
+  (kbd "M-J") 'org-metadown
+  (kbd "M-K") 'org-metaup
+  (kbd "M-L") 'org-metaright)
+
+(evil-define-key 'insert org-mode-map
+  (kbd "M-j") 'org-shiftleft
+  (kbd "M-k") 'org-shiftright
+  (kbd "M-H") 'org-metaleft
+  (kbd "M-J") 'org-metadown
+  (kbd "M-K") 'org-metaup
+  (kbd "M-L") 'org-metaright)
+
+(evil-define-key 'insert orgstruct-mode-map
+  (kbd "M-j") 'org-shiftleft
+  (kbd "M-k") 'org-shiftright
+  (kbd "M-H") 'org-metaleft
+  (kbd "M-J") 'org-metadown
+  (kbd "M-K") 'org-metaup
+  (kbd "M-L") 'org-metaright)
 
 (provide 'personal-evil)

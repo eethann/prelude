@@ -1,5 +1,5 @@
 ;;; Code:
-(prelude-require-packages '(drupal-mode zencoding-mode emmet-mode apache-mode))
+(prelude-require-packages '(drupal-mode zencoding-mode emmet-mode apache-mode ac-html web-mode auto-complete))
 
 ;; Disable whitespace-mode when using web-mode
 (add-hook 'web-mode-hook (lambda () (whitespace-mode -1)))
@@ -34,4 +34,13 @@
 (setq web-mode-disable-autocompletion t)
 (local-set-key (kbd "RET") 'newline-and-indent)
 
+;; ac-html settings
+;; (add-to-list 'ac-sources 'ac-source-html-tag)
+;; (add-to-list 'ac-sources 'ac-source-html-attribute)
+;; (add-to-list 'ac-sources 'ac-source-html-attribute-2)
+;; (if (not (boundp 'web-mode-ac-sources-alist)) (setq web-mode-ac-sources-alist ()))
+;; (add-to-list 'web-mode-ac-sources-alist
+;;              '("html" . (ac-source-html-tag
+;;                          ac-source-html-attribute
+;;                          ac-source-html-attribute-2)))
 (provide 'personal-web)
