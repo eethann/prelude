@@ -179,6 +179,7 @@ By default most of the modules that ship with Prelude are not loaded. For more i
 (require 'prelude-emacs-lisp)
 (require 'prelude-erc)
 ;; (require 'prelude-erlang)
+;; (require 'prelude-elixir)
 ;; (require 'prelude-haskell)
 (require 'prelude-js)
 ;; (require 'prelude-latex)
@@ -414,6 +415,10 @@ Key Binding        | Description
 If you prefer Ido in everywhere, you should not add `prelude-helm-everywhere`, so you can use Helm along with Ido and Prelude's default commands.
 
 You can always reactivate Helm with `(prelude-global-helm-global-mode-on)`.
+
+**NOTICE**: In `helm-M-x`, you have to pass prefix argument *AFTER* you run `helm-M-x`,
+because your prefix argument will be displayed in the modeline when in `helm-M-x`
+buffer. Passing prefix argument **BEFORE** =helm-M-x= **has no effect**.
 
 
 #### Key-chords
