@@ -14,7 +14,7 @@
                             color-theme-sanityinc-tomorrow
                             base16-theme
                             smooth-scrolling
-                            moe-theme
+                            ;; moe-theme
                             seti-theme
                             ))
 

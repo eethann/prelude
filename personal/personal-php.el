@@ -5,8 +5,10 @@
 
 ;;; Code:
 
-(prelude-require-packages '(geben php-mode))
+(prelude-require-packages '(geben php-mode php-refactor-mode))
 
+(require 'php-refactor-mode)
+(add-hook 'php-mode-hook 'php-refactor-mode)
 
 (custom-set-variables
  '(geben-pause-at-entry-line t)

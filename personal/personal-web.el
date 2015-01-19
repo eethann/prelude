@@ -1,5 +1,7 @@
 ;;; Code:
-(prelude-require-packages '(drupal-mode zencoding-mode emmet-mode apache-mode ac-html web-mode auto-complete))
+(prelude-require-packages '(
+                            drupal-mode
+                            zencoding-mode emmet-mode apache-mode ac-html web-mode auto-complete))
 
 ;; Disable whitespace-mode when using web-mode
 (add-hook 'web-mode-hook (lambda () (whitespace-mode -1)))

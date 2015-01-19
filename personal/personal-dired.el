@@ -8,12 +8,15 @@
 ;; "!" is used in dired windows to run commands on all marked files.
 ;; "?" iterates the command for all marked files in a "!" command minibuff
 
-(prelude-require-packages '(dirtree lusty-explorer ))
+(prelude-require-packages '(
+                            dirtree
+                            ;; lusty-explorer
+                            ))
 
 (require 'find-dired)
 
 (setq find-ls-option '("-print0 | xargs -0 ls -ld" . "-ld"))
 
-(require 'dired-x)
+;; (require 'dired-x)
 
 (provide 'personal-dired)

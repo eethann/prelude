@@ -19,10 +19,17 @@
                             ggtags
                             helm-gtags
                             fullframe
+                            discover
                             hl-anything
+                            string-inflection
                         ))
 
 (global-hl-line-mode)
+
+;; Generic settings for code editing
+(setq c-basic-offset 2)
+(setq tab-width 2)
+(setq-default indent-tabs-mode nil)
 
 (fullframe magit-status magit-mode-quit-window)
 
@@ -56,10 +63,10 @@
 
 ;; NeoTree Setup
 (add-hook 'neotree-mode-hook
-          (lambda () 
-           ((define-key neotree-mode-map [return] 'neotree-enter)
+          (lambda ()
+           (define-key neotree-mode-map [return] 'neotree-enter)
            (define-key neotree-mode-map (kbd "\C-g") 'neotree-refresh)
-           (hl-line-mode 1))
+           (hl-line-mode 1)
            ))
 
 (provide 'personal-ide)

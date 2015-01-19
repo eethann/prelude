@@ -1,3 +1,10 @@
+;;; personal-evil --- My crazy Evil configuration
+
+;;; Commentary:
+;;; not much else to say.
+(require 'cl)
+
+;;; Code:
 (prelude-require-packages '(
                             evil
                             evil-god-state
@@ -6,24 +13,34 @@
                             evil-matchit
                             evil-nerd-commenter
                             evil-org
+                            evil-paredit
                             evil-exchange
                             ;; evil-extra-operator
                             ace-jump-mode
                             ace-jump-buffer
+                            ag
+                            evil-jumper
+                            ;; evil-easymotion
+                            evil-commentary
+                            evil-visualstar
                             ))
 
-(evil-exchange-install)
+(evil-mode 1)
 ;; (require 'evil-nerd-commenter)
 
+(global-evil-jumper-mode)
 (global-evil-leader-mode)
-(evil-mode 1)
+(evil-exchange-install)
 (setq evil-shift-width 2)
 
 (global-evil-surround-mode 1)
+(evil-commentary-default-setup)
+(global-evil-visualstar-mode)
 
-(evil-leader/set-leader ";")
+;; (evil-leader/set-leader ";")
+;; (evil-leader/set-leader ",")
+(evil-leader/set-leader "<SPC>")
 
-(evil-define-key 'normal global-map "\"" 'evil-execute-in-god-state)
 (evil-define-key 'god global-map [escape] 'evil-god-state-bail)
 
 ;; evil-nerd-commenter bindings
@@ -34,15 +51,18 @@
   "/l" 'evilnc-comment-or-uncomment-to-the-line
   "/c" 'evilnc-copy-and-comment-lines
   "/p" 'evilnc-comment-or-uncomment-paragraphs
-  "/r" 'comment-or-uncomment-region)
+  "/r" 'comment-or-uncomment-region
+  )
 
 ;; Evil Leader Basics
 
 (global-evil-leader-mode)
 
 (evil-leader/set-key
-  ";" 'evil-buffer
-  "SPC" 'helm-mini
+  ":" 'helm-M-x
+  ";" 'helm-mini
+  "SPC" 'evil-buffer
+  "G" 'evil-execute-in-god-state
 
   ;; the home row
   "a" 'org-agenda
@@ -52,16 +72,19 @@
   "g" 'magit-status
   "j" 'helm-imenu
   "k" 'kill-buffer
+  "K" 'kill-buffer-and-window
   "l" 'switch-window
 
   ;; Others
-  "e" 'helm-projectile
+  "e" 'helm-find-files
+  "E" 'helm-projectile
   "b" 'evil-buffer
   "B" 'switch-to-buffer
-  "r" 'quickrun
   "D" 'deft
+  "x" 'eval-last-sexp
   "X" 'execute-extended-command
-  "q" 'kill-buffer-and-window
+  "qq" 'quickrun
+  "qr" 'quickrun-region
   "w" 'switch-window
   "##" 'linum-mode
   "#$" 'linum-relative-toggle
@@ -79,12 +102,16 @@
   ;; org (most defined in evil-org as well)
   "t"  'org-show-todo-tree
   "a"  'org-agenda
-  "x"  'org-archive-subtree
   "c" 'org-capture
+  "_" 'string-inflection-all-cycle
   )
 
 ;; Window handling
 
+(evil-leader/set-key-for-mode 'clojure-mode
+  "x" 'cider-eval-last-sexp
+  "d" 'cider-doc
+  )
 
 ;; Evil leader for Flycheck
 
@@ -98,7 +125,6 @@
 
 (evil-leader/set-key-for-mode 'org-mode
   "ox" 'org-toggle-checkbox
-  "x" 'org-toggle-checkbox
   "oj" 'org-goto
   "os" 'org-schedule
   "oo" 'org-open-at-point
@@ -157,7 +183,7 @@
 
 ;; Evil god mode
 
-(evil-leader/set-key "[" 'evil-execute-in-god-state)
+;; (evil-leader/set-key )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Key maps
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -184,7 +210,48 @@
        (t (setq unread-command-events (append unread-command-events
                           (list evt))))))))
 
+;;;;;;
+;; expand region
+;;;;;;
 
+(eval-after-load "evil" '(setq expand-region-contract-fast-key "\""))
+(evil-leader/set-key "'" 'er/expand-region)
+
+;;;;;
+;; js refactor
+;;;;;
+(evil-leader/set-key-for-mode 'js2-mode
+  "ref" 'js2r-extract-function
+  "rem" 'js2r-extract-method
+  "rip" 'js2r-introduce-parameter
+  "rlp" 'js2r-localize-parameter
+  "reo" 'js2r-expand-object
+  "rco" 'js2r-contract-object
+  "reu" 'js2r-expand-function
+  "rcu" 'js2r-contract-function
+  "rea" 'js2r-expand-array
+  "rca" 'js2r-contract-array
+  "rwi" 'js2r-wrap-buffer-in-iife
+  "rig" 'js2r-inject-global-in-iife
+  "rag" 'js2r-add-to-globals-annotation
+  "rev" 'js2r-extract-var
+  "riv" 'js2r-inline-var
+  "rrv" 'js2r-rename-var
+  "rvt" 'js2r-var-to-this
+  "rao" 'js2r-arguments-to-object
+  "r3i" 'js2r-ternary-to-if
+  "rsv" 'js2r-split-var-declaration
+  "rss" 'js2r-split-string
+  "ruw" 'js2r-unwrap
+  "rlt" 'js2r-log-this
+  "rsl" 'js2r-forward-slurp
+  "rba" 'js2r-forward-barf
+  "rk" 'js2r-kill
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Evil Org
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Adapted from evil-mode
 
@@ -270,12 +337,12 @@
 
 ;; peep-dired
 
-(evil-define-key 'normal peep-dired-mode-map (kbd "<SPC>") 'peep-dired-scroll-page-down)
-(evil-define-key 'normal peep-dired-mode-map (kbd "C-<SPC>") 'peep-dired-scroll-page-up)
-(evil-define-key 'normal peep-dired-mode-map (kbd "<backspace>") 'peep-dired-scroll-page-up)
-(evil-define-key 'normal peep-dired-mode-map (kbd "j") 'peep-dired-next-file)
-(evil-define-key 'normal peep-dired-mode-map (kbd "k") 'peep-dired-prev-file)
-(add-hook 'peep-dired-mode-hook 'evil-normalize-keymaps)
+;; (evil-define-key 'normal peep-dired-mode-map (kbd "<SPC>") 'peep-dired-scroll-page-down)
+;; (evil-define-key 'normal peep-dired-mode-map (kbd "C-<SPC>") 'peep-dired-scroll-page-up)
+;; (evil-define-key 'normal peep-dired-mode-map (kbd "<backspace>") 'peep-dired-scroll-page-up)
+;; (evil-define-key 'normal peep-dired-mode-map (kbd "j") 'peep-dired-next-file)
+;; (evil-define-key 'normal peep-dired-mode-map (kbd "k") 'peep-dired-prev-file)
+;; (add-hook 'peep-dired-mode-hook 'evil-normalize-keymaps)
 
 ;; Set emacs state for various modes
 
@@ -303,7 +370,7 @@
       do (evil-set-initial-state mode state))
 
 (loop for (mode) in '('mu4e-headers-mode 'mu4e-compose-mode 'mu4e-main-mode)
-      do 
+      do
 '      (setq evil-emacs-state-modes (remove mode evil-emacs-state-modes)))
 
 ;; Power-up for the escape key
@@ -351,7 +418,7 @@
        ))
 
 ;; hl-anything bindings
-(evil-leader/set-key 
+(evil-leader/set-key
   "yy" 'hl-highlight-thingatpt-local
   "yu" 'hl-unhighlight-all-local
   "ys" 'hl-find-thing-forwardly
@@ -370,7 +437,7 @@
 (eval-after-load "ace-jump-mode"
   '(ace-jump-mode-enable-mark-sync))
 (define-key global-map (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
-(evil-leader/set-key "'" 'ace-jump-mode-pop-mark)
+(evil-leader/set-key "\"" 'ace-jump-mode-pop-mark)
 
 ;;
 ;; from https://github.com/bradleywright/emacs.d/blob/master/utils.el
@@ -384,6 +451,9 @@ with prefix"
     (switch-to-buffer "*terminal*")))
 (global-set-key (kbd "C-c C-t t") 'bw/open-term)
 
+(evil-define-key 'normal global-map
+  "," 'evil-ex
+  )
 
 ;; Evil Org Maps
 ;; from https://github.com/cofi/dotfiles/blob/master/emacs.d/config/cofi-evil.el
@@ -437,5 +507,38 @@ with prefix"
   (kbd "M-J") 'org-metadown
   (kbd "M-K") 'org-metaup
   (kbd "M-L") 'org-metaright)
+
+;;; Multiple Cursors Handling
+
+;;; Thanks to tkf on
+;;; https://github.com/magnars/multiple-cursors.el/issues/19
+;;; insert state has been changed to emacs state
+(defvar my-mc-evil-previous-state nil)
+
+(defun my-mc-evil-switch-to-emacs-state ()
+  (when (and (bound-and-true-p evil-mode)
+             (not (eq evil-state 'emacs)))
+    (setq my-mc-evil-previous-state evil-state)
+    (evil-emacs-state)))
+
+(defun my-mc-evil-back-to-previous-state ()
+  (when my-mc-evil-previous-state
+    (unwind-protect
+        (case my-mc-evil-previous-state
+          ((normal visual insert) (evil-force-normal-state))
+          (t (message "Don't know how to handle previous state: %S"
+                      my-mc-evil-previous-state)))
+      (setq my-mc-evil-previous-state nil))))
+
+(add-hook 'multiple-cursors-mode-enabled-hook
+          'my-mc-evil-switch-to-emacs-state)
+(add-hook 'multiple-cursors-mode-disabled-hook
+          'my-mc-evil-back-to-previous-state)
+
+(evil-leader/set-key
+  "--" 'mc/mark-all-like-this
+  "-+" 'mc/mark-previous-symbol-like-this
+  "-_" 'mc/mark-previous-symbol-like-this
+  )
 
 (provide 'personal-evil)
